@@ -1,130 +1,608 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   MiguelSpeed - Check Your Internet Speed!
+  </title>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&amp;family=Google+Sans+Display:wght@700;800&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0&amp;icon_names=dark_mode,light_mode,routine" rel="stylesheet"/>
+  <style>
+   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-  <title>MiguelSpeed - Internet Speed Test</title>
+:root {
+  --bg: #f2f2f2;
+  --text: #0a0a0a;
+  --sub: #888;
+  --border: rgba(0,0,0,0.09);
+  --bar-bg: rgba(0,0,0,0.10);
+  --bar-fill: #0a0a0a;
+  --btn-bg: #0a0a0a;
+  --btn-text: #fff;
+  --header-bg: rgba(242,242,242,0.80);
+  --glass-bg: rgba(255,255,255,0.50);
+  --glass-border: rgba(0,0,0,0.08);
+  --glass-shadow: 0 2px 16px rgba(0,0,0,0.07);
+}
+body.dark {
+  --bg: #0f0f0f;
+  --text: #ededed;
+  --sub: #666;
+  --border: rgba(255,255,255,0.07);
+  --bar-bg: rgba(255,255,255,0.10);
+  --bar-fill: #ededed;
+  --btn-bg: #ededed;
+  --btn-text: #0f0f0f;
+  --header-bg: rgba(15,15,15,0.82);
+  --glass-bg: rgba(255,255,255,0.04);
+  --glass-border: rgba(255,255,255,0.09);
+  --glass-shadow: 0 2px 20px rgba(0,0,0,0.35);
+}
 
-  <link rel="stylesheet" href="style.css">
+body {
+  font-family: 'Google Sans', 'Product Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background 0.35s, color 0.35s;
+  overflow-x: hidden;
+}
 
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap">
+.bg-blobs { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.blob {
+  position: absolute; border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.09;
+  animation: blobFloat 14s ease-in-out infinite;
+}
+body.dark .blob { opacity: 0.055; }
+.blob1 { width: 500px; height: 500px; background: #b0c8ff; top: -120px; left: -140px; }
+.blob2 { width: 380px; height: 380px; background: #d0c0ff; top: 45%; right: -100px; animation-delay: -5s; }
+.blob3 { width: 340px; height: 340px; background: #b8f0cc; bottom: -80px; left: 35%; animation-delay: -9s; }
+@keyframes blobFloat {
+  0%,100% { transform: translate(0,0) scale(1); }
+  40%      { transform: translate(24px,-18px) scale(1.03); }
+  70%      { transform: translate(-16px,22px) scale(0.97); }
+}
 
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0">
-</head>
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+}
 
-<body>
+header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 24px; height: 52px;
+  background: var(--header-bg);
+  backdrop-filter: blur(18px) saturate(1.5);
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.35s;
+}
+.logo-btn {
+  display: flex; align-items: center; gap: 0;
+  font-size: 0.97rem; font-weight: 400;
+  background: none; border: none; cursor: pointer;
+  color: var(--text); font-family: 'Google Sans', sans-serif;
+  padding: 0; transition: opacity 0.15s;
+}
+.logo-btn:hover { opacity: 0.65; }
+.logo-btn strong { font-weight: 700; }
 
+.theme-btn {
+  position: absolute; right: 18px;
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  cursor: pointer; transition: opacity 0.15s, transform 0.15s;
+  color: var(--text);
+}
+.theme-btn:hover { opacity: 0.7; transform: scale(1.08); }
+.theme-btn .material-symbols-outlined {
+  font-size: 19px; line-height: 1;
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+  user-select: none;
+}
+
+.screen {
+  display: none; opacity: 0; transform: translateY(14px);
+  align-items: center; justify-content: center;
+  min-height: 100vh; flex-direction: column;
+  text-align: center; padding: 80px 24px 48px;
+  position: relative; z-index: 1;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.screen.active  { display: flex; }
+.screen.visible { opacity: 1; transform: translateY(0); }
+
+#screen-home h1 {
+  font-family: 'Google Sans Display', 'Google Sans', sans-serif;
+  font-size: clamp(2.5rem, 6.5vw, 4.6rem);
+  font-weight: 800; line-height: 1.07;
+  letter-spacing: -0.03em;
+  max-width: 680px; margin-bottom: 40px;
+}
+.check-btn {
+  background: var(--btn-bg); color: var(--btn-text);
+  border: none; border-radius: 999px;
+  padding: 16px 54px; font-size: 1.12rem;
+  font-family: 'Google Sans', sans-serif; font-weight: 600;
+  cursor: pointer; letter-spacing: 0.01em;
+  transition: transform 0.16s, box-shadow 0.16s;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.15);
+}
+.check-btn:hover { transform: scale(1.04); box-shadow: 0 6px 22px rgba(0,0,0,0.20); }
+.check-btn:active { transform: scale(0.97); }
+
+#screen-checking h2 {
+  font-family: 'Google Sans Display', 'Google Sans', sans-serif;
+  font-size: clamp(2.8rem, 7vw, 5rem);
+  font-weight: 800; letter-spacing: -0.03em; margin-bottom: 8px;
+}
+.phase-label {
+  font-size: clamp(1.1rem, 2.8vw, 1.55rem);
+  font-weight: 500; color: var(--sub); margin-bottom: 44px;
+}
+.live-speed {
+  font-size: 1.05rem; font-weight: 600; color: var(--text);
+  margin-bottom: 18px; min-height: 1.5em;
+}
+.progress-wrap {
+  width: min(720px, 90vw); height: 8px;
+  background: var(--bar-bg); border-radius: 999px; overflow: hidden;
+}
+.progress-bar {
+  height: 100%; width: 0%; background: var(--bar-fill);
+  border-radius: 999px; transition: width 0.12s linear, background 0.35s;
+  position: relative;
+}
+.progress-bar::after {
+  content: ''; position: absolute; top: 0; left: -60px;
+  width: 60px; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0%   { left: -60px; opacity: 0; }
+  30%  { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+
+#screen-results h2 {
+  font-family: 'Google Sans Display', 'Google Sans', sans-serif;
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: 700; margin-bottom: 28px; letter-spacing: -0.02em;
+}
+.cards {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  justify-content: center; margin-bottom: 32px;
+}
+.card {
+  border-radius: 18px; padding: 26px 28px 22px;
+  min-width: 195px; flex: 1; max-width: 230px; text-align: center;
+  animation: cardIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.card:nth-child(1) { animation-delay: 0.04s; }
+.card:nth-child(2) { animation-delay: 0.11s; }
+.card:nth-child(3) { animation-delay: 0.18s; }
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.card-label { font-size: 0.95rem; font-weight: 500; margin-bottom: 14px; color: var(--text); }
+.card-main {
+  font-family: 'Google Sans Display', 'Google Sans', sans-serif;
+  font-size: clamp(1.85rem, 3.8vw, 2.5rem);
+  font-weight: 800; letter-spacing: -0.03em;
+  margin-bottom: 4px; color: var(--text);
+}
+.card-sub { font-size: 0.85rem; color: var(--sub); }
+.rating {
+  display: inline-block; margin-top: 8px;
+  padding: 3px 10px; border-radius: 999px;
+  font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
+.rating.great { background: rgba(34,197,94,0.13); color: #15803d; }
+.rating.good  { background: rgba(234,179,8,0.13);  color: #92400e; }
+.rating.poor  { background: rgba(239,68,68,0.13);  color: #b91c1c; }
+body.dark .rating.great { background: rgba(34,197,94,0.16); color: #4ade80; }
+body.dark .rating.good  { background: rgba(234,179,8,0.16);  color: #fbbf24; }
+body.dark .rating.poor  { background: rgba(239,68,68,0.16);  color: #f87171; }
+
+.retest-btn {
+  background: var(--btn-bg); color: var(--btn-text);
+  border: none; border-radius: 999px;
+  padding: 15px 50px; font-size: 1rem;
+  font-family: 'Google Sans', sans-serif; font-weight: 600;
+  cursor: pointer; transition: transform 0.16s, box-shadow 0.16s;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.15);
+}
+.retest-btn:hover { transform: scale(1.04); box-shadow: 0 6px 22px rgba(0,0,0,0.20); }
+.retest-btn:active { transform: scale(0.97); }
+
+.history-wrap { margin-top: 36px; width: min(700px, 90vw); text-align: left; }
+.history-title {
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--sub); margin-bottom: 8px; padding-left: 2px;
+}
+.history-list { display: flex; flex-direction: column; gap: 6px; }
+.history-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px; border-radius: 12px; font-size: 0.84rem;
+  animation: fadeUp 0.28s ease both;
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+.history-time { color: var(--sub); font-size: 0.76rem; min-width: 52px; }
+.history-vals { display: flex; gap: 20px; }
+.history-val { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.history-val .hv-num { font-weight: 700; font-size: 0.87rem; }
+.history-val .hv-lbl { font-size: 0.68rem; color: var(--sub); }
+
+.toast {
+  position: fixed; bottom: 22px; left: 50%;
+  transform: translateX(-50%) translateY(70px);
+  background: #dc2626; color: #fff;
+  padding: 10px 22px; border-radius: 999px;
+  font-size: 0.85rem; font-weight: 600;
+  transition: transform 0.32s cubic-bezier(0.34,1.56,0.64,1);
+  z-index: 999; pointer-events: none;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+ </head>
+ <body>
   <div class="bg-blobs">
-    <div class="blob blob1"></div>
-    <div class="blob blob2"></div>
-    <div class="blob blob3"></div>
+   <div class="blob blob1">
+   </div>
+   <div class="blob blob2">
+   </div>
+   <div class="blob blob3">
+   </div>
   </div>
-
   <header>
-
-    <button id="logoBtn" class="logo-btn">
-      <strong>MiguelSpeed</strong>
-      <span> - Check Your Internet Speed</span>
-    </button>
-
-    <button id="themeBtn" class="theme-btn">
-      <span class="material-symbols-outlined" id="themeIcon">
-        routine
-      </span>
-    </button>
-
+   <button class="logo-btn" id="logoBtn">
+    <strong>
+     MiguelSpeed
+    </strong>
+    - Check Your Internet Speed!
+   </button>
+   <button class="theme-btn" id="themeBtn" title="Toggle theme">
+    <span class="material-symbols-outlined" id="themeIcon">
+     routine
+    </span>
+   </button>
   </header>
-
-  <main>
-
-    <div class="screen active" id="screen-home">
-
-      <h1>Check Your Internet Speed Precisely.</h1>
-
-      <button id="startBtn" class="check-btn">
-        Check Speed
-      </button>
-
+  <div class="screen active" id="screen-home">
+   <h1>
+    Check Your Internet Speed Precisely.
+   </h1>
+   <button class="check-btn" id="startBtn">
+    Check Speed
+   </button>
+  </div>
+  <div class="screen" id="screen-checking">
+   <h2>
+    Checking..
+   </h2>
+   <p class="phase-label" id="phaseLabel">
+    (Download Speed)
+   </p>
+   <div class="live-speed" id="liveSpeed">
+   </div>
+   <div class="progress-wrap">
+    <div class="progress-bar" id="progressBar">
     </div>
-
-    <div class="screen" id="screen-checking">
-
-      <h2>Checking...</h2>
-
-      <p id="phaseLabel" class="phase-label">
-        (Download Speed)
-      </p>
-
-      <div id="liveSpeed" class="live-speed"></div>
-
-      <div class="progress-wrap">
-        <div id="progressBar" class="progress-bar"></div>
-      </div>
-
+   </div>
+  </div>
+  <div class="screen" id="screen-results">
+   <h2>
+    Result
+   </h2>
+   <div class="cards">
+    <div class="card glass">
+     <div class="card-label">
+      Download
+     </div>
+     <div class="card-main" id="dlMain">
+      --
+     </div>
+     <div class="card-sub" id="dlSub">
+     </div>
+     <div class="rating" id="dlRating">
+     </div>
     </div>
-
-    <div class="screen" id="screen-results">
-
-      <h2>Results</h2>
-
-      <div class="cards">
-
-        <div class="card glass">
-          <div class="card-label">Download</div>
-
-          <div class="card-main" id="dlMain">--</div>
-
-          <div class="card-sub" id="dlSub"></div>
-
-          <div class="rating" id="dlRating"></div>
-        </div>
-
-        <div class="card glass">
-          <div class="card-label">Upload</div>
-
-          <div class="card-main" id="ulMain">--</div>
-
-          <div class="card-sub" id="ulSub"></div>
-
-          <div class="rating" id="ulRating"></div>
-        </div>
-
-        <div class="card glass">
-          <div class="card-label">Ping</div>
-
-          <div class="card-main" id="pingMain">--</div>
-
-          <div class="card-sub" id="pingSub"></div>
-
-          <div class="rating" id="pingRating"></div>
-        </div>
-
-      </div>
-
-      <button id="retestBtn" class="retest-btn">
-        Re-test
-      </button>
-
-      <div class="history-wrap">
-
-        <div class="history-title">
-          Previous Results
-        </div>
-
-        <div id="historyList" class="history-list"></div>
-
-      </div>
-
+    <div class="card glass">
+     <div class="card-label">
+      Upload
+     </div>
+     <div class="card-main" id="ulMain">
+      --
+     </div>
+     <div class="card-sub" id="ulSub">
+     </div>
+     <div class="rating" id="ulRating">
+     </div>
     </div>
+    <div class="card glass">
+     <div class="card-label">
+      Ping
+     </div>
+     <div class="card-main" id="pingMain">
+      --
+     </div>
+     <div class="card-sub" id="pingSub">
+     </div>
+     <div class="rating" id="pingRating">
+     </div>
+    </div>
+   </div>
+   <button class="retest-btn" id="retestBtn">
+    Re-test
+   </button>
+   <div class="history-wrap">
+    <div class="history-title">
+     Previous results
+    </div>
+    <div class="history-list" id="historyList">
+    </div>
+   </div>
+  </div>
+  <div class="toast" id="toast">
+  </div>
+  <script>
+   const THEMES = ['light','dark','auto'];
+const ICONS  = { light: 'light_mode', dark: 'dark_mode', auto: 'routine' };
+let currentTheme = localStorage.getItem('ms_theme') || 'auto';
 
-  </main>
+function applyTheme(t) {
+  const dark = t === 'dark' || (t === 'auto' && matchMedia('(prefers-color-scheme:dark)').matches);
+  document.body.classList.toggle('dark', dark);
+  document.getElementById('themeIcon').textContent = ICONS[t];
+}
+applyTheme(currentTheme);
+matchMedia('(prefers-color-scheme:dark)').addEventListener('change', () => {
+  if (currentTheme === 'auto') applyTheme('auto');
+});
 
-  <div id="toast" class="toast"></div>
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const idx = THEMES.indexOf(currentTheme);
+  currentTheme = THEMES[(idx + 1) % THEMES.length];
+  localStorage.setItem('ms_theme', currentTheme);
+  applyTheme(currentTheme);
+});
 
-  <script src="script.js"></script>
+document.getElementById('logoBtn').addEventListener('click', () => showScreen('screen-home'));
 
-</body>
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active','visible'));
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('visible')));
+}
+
+const setProgress = pct => { document.getElementById('progressBar').style.width = pct + '%'; };
+const resetProgress = () => setProgress(0);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+function fmt(val, unit) {
+  if (val >= 100) return Math.round(val) + unit;
+  if (val >= 10)  return val.toFixed(1) + unit;
+  return val.toFixed(2) + unit;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3400);
+}
+
+function makeRandomBuffer(bytes) {
+  const buf = new Uint8Array(bytes);
+  for (let off = 0; off < bytes; off += 65536)
+    crypto.getRandomValues(buf.subarray(off, Math.min(off + 65536, bytes)));
+  return buf;
+}
+
+function rateSpeed(mbps) {
+  if (mbps >= 25) return ['great','Great'];
+  if (mbps >= 5)  return ['good','Good'];
+  return ['poor','Slow'];
+}
+function ratePing(ms) {
+  if (ms <= 40)  return ['great','Excellent'];
+  if (ms <= 100) return ['good','Good'];
+  return ['poor','High'];
+}
+function setRating(id, cls, lbl) {
+  const el = document.getElementById(id);
+  el.className = 'rating ' + cls;
+  el.textContent = lbl;
+}
+
+async function measurePing() {
+  const endpoint = 'https://www.google.com/generate_204';
+  const samples = 8, times = [];
+  for (let i = 0; i < samples; i++) {
+    const t0 = performance.now();
+    try { await fetch(endpoint + '?_=' + Date.now(), { cache: 'no-store', mode: 'no-cors' }); } catch(_) {}
+    times.push(performance.now() - t0);
+    await sleep(60);
+  }
+  times.sort((a,b) => a - b);
+  return Math.round(times.slice(0, 5).reduce((a,b) => a + b) / 5);
+}
+
+async function measureDownload(onProgress, onLive) {
+  const SIZE = 10_000_000; // 10 MB per stream
+  const STREAMS = 3;
+  const TOTAL = SIZE * STREAMS;
+  let loaded = 0;
+  const start = performance.now();
+  let lastLive = start;
+
+  const readers = await Promise.all(
+    Array.from({ length: STREAMS }, (_, i) =>
+      fetch(`https://httpbin.org/bytes/${SIZE}?_=${Date.now()}_${i}`, { cache: 'no-store' })
+        .then(r => r.body.getReader())
+        .catch(() => null)
+    )
+  );
+
+  await Promise.all(readers.map(async reader => {
+    if (!reader) return;
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      loaded += value.length;
+      const now = performance.now();
+      onProgress(Math.min(loaded / TOTAL * 100, 99));
+      if (now - lastLive > 250) {
+        const sec = (now - start) / 1000;
+        if (sec > 0.3) onLive(fmt(loaded / sec / 1_000_000, ' MB/s'));
+        lastLive = now;
+      }
+    }
+  }));
+
+  const sec = (performance.now() - start) / 1000;
+  return { MBps: loaded / sec / 1_000_000, Mbps: loaded * 8 / sec / 1_000_000 };
+}
+
+async function measureUpload(onProgress, onLive) {
+  const CHUNK = 512_000; // 512 KB — safely under any limit
+  const ROUNDS = 12, PARALLEL = 2;
+  const TOTAL = CHUNK * ROUNDS * PARALLEL;
+  let uploaded = 0;
+  const start = performance.now();
+  let lastLive = start;
+
+  for (let r = 0; r < ROUNDS; r++) {
+    const data = makeRandomBuffer(CHUNK);
+    await Promise.all(Array.from({ length: PARALLEL }, () =>
+      fetch(`https://httpbin.org/post?_=${Date.now()}${Math.random()}`, {
+        method: 'POST', body: data.slice(),
+        cache: 'no-store',
+        headers: { 'Content-Type': 'application/octet-stream' }
+      }).catch(() => {})
+    ));
+    uploaded += CHUNK * PARALLEL;
+    const now = performance.now();
+    onProgress(Math.min(uploaded / TOTAL * 100, 99));
+    if (now - lastLive > 250) {
+      const sec = (now - start) / 1000;
+      if (sec > 0.3) onLive(fmt(uploaded / sec / 1_000_000, ' MB/s'));
+      lastLive = now;
+    }
+  }
+
+  const sec = (performance.now() - start) / 1000;
+  return { MBps: uploaded / sec / 1_000_000, Mbps: uploaded * 8 / sec / 1_000_000 };
+}
+
+const history = JSON.parse(localStorage.getItem('ms_history') || '[]');
+function saveHistory(dl, ul, ping) {
+  history.unshift({ dl, ul, ping, t: Date.now() });
+  if (history.length > 5) history.length = 5;
+  localStorage.setItem('ms_history', JSON.stringify(history));
+}
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  list.innerHTML = '';
+  const rows = history.slice(1);
+  if (!rows.length) {
+    list.innerHTML = '<div style="color:var(--sub);font-size:0.8rem;padding:2px 4px">Run multiple tests to see history.</div>';
+    return;
+  }
+  rows.forEach((h, i) => {
+    const d = new Date(h.t);
+    const time = d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+    const row = document.createElement('div');
+    row.className = 'history-row glass';
+    row.style.animationDelay = (i * 0.05) + 's';
+    row.innerHTML = `
+      <span class="history-time">${time}</span>
+      <div class="history-vals">
+        <div class="history-val"><span class="hv-num">${fmt(h.dl.MBps,' MB/s')}</span><span class="hv-lbl">Download</span></div>
+        <div class="history-val"><span class="hv-num">${fmt(h.ul.MBps,' MB/s')}</span><span class="hv-lbl">Upload</span></div>
+        <div class="history-val"><span class="hv-num">${h.ping}ms</span><span class="hv-lbl">Ping</span></div>
+      </div>`;
+    list.appendChild(row);
+  });
+}
+
+async function runTest() {
+  showScreen('screen-checking');
+  resetProgress();
+  const phase = document.getElementById('phaseLabel');
+  const live  = document.getElementById('liveSpeed');
+
+  // 1. Ping
+  phase.textContent = '(Measuring Ping)';
+  live.textContent = '';
+  let pingPct = 0;
+  const pingTick = setInterval(() => { pingPct = Math.min(pingPct + 3, 88); setProgress(pingPct); }, 100);
+  let pingMs = 0;
+  try { pingMs = await measurePing(); } catch(e) { showToast('Ping failed — check connection'); }
+  clearInterval(pingTick);
+  setProgress(100); await sleep(280);
+
+  // 2. Download
+  phase.textContent = '(Download Speed)';
+  live.textContent = 'Starting…';
+  resetProgress();
+  let dl = { MBps: 0, Mbps: 0 };
+  try {
+    dl = await measureDownload(pct => setProgress(pct), spd => { live.textContent = spd; });
+  } catch(e) { showToast('Download test failed — check connection'); }
+  live.textContent = fmt(dl.MBps, ' MB/s');
+  setProgress(100); await sleep(300);
+
+  // 3. Upload
+  phase.textContent = '(Upload Speed)';
+  live.textContent = 'Starting…';
+  resetProgress();
+  let ul = { MBps: 0, Mbps: 0 };
+  try {
+    ul = await measureUpload(pct => setProgress(pct), spd => { live.textContent = spd; });
+  } catch(e) { showToast('Upload test failed — check connection'); }
+  live.textContent = fmt(ul.MBps, ' MB/s');
+  setProgress(100); await sleep(300);
+
+  // Populate results
+  document.getElementById('dlMain').textContent   = fmt(dl.MBps, 'MB/s');
+  document.getElementById('dlSub').textContent    = fmt(dl.Mbps, ' Mb/s');
+  document.getElementById('ulMain').textContent   = fmt(ul.MBps, 'MB/s');
+  document.getElementById('ulSub').textContent    = fmt(ul.Mbps, ' Mb/s');
+  document.getElementById('pingMain').textContent = pingMs + 'ms';
+  document.getElementById('pingSub').textContent  = pingMs <= 40 ? 'Low latency' : pingMs <= 100 ? 'Average latency' : 'High latency';
+
+  setRating('dlRating',   ...rateSpeed(dl.Mbps));
+  setRating('ulRating',   ...rateSpeed(ul.Mbps));
+  setRating('pingRating', ...ratePing(pingMs));
+
+  saveHistory(dl, ul, pingMs);
+  renderHistory();
+  showScreen('screen-results');
+}
+
+document.getElementById('startBtn').addEventListener('click', runTest);
+document.getElementById('retestBtn').addEventListener('click', runTest);
+
+// boot animation
+requestAnimationFrame(() => requestAnimationFrame(() =>
+  document.getElementById('screen-home').classList.add('visible')
+));
+  </script>
+ </body>
 </html>
