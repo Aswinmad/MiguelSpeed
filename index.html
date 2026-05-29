@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>MiguelSpeed - Check Your Internet Speed!</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Display:wght@700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0&icon_names=dark_mode,light_mode,routine"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="bg-blobs">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+  </div>
+
+  <header>
+    <button class="logo-btn" id="logoBtn">
+      <strong>MiguelSpeed</strong>&nbsp;- Check Your Internet Speed!
+    </button>
+
+    <button class="theme-btn" id="themeBtn" title="Toggle theme">
+      <span class="material-symbols-outlined" id="themeIcon">routine</span>
+    </button>
+  </header>
+
+  <!-- HOME -->
+  <div class="screen active" id="screen-home">
+    <h1>Check Your Internet Speed Precisely.</h1>
+    <button class="check-btn" id="startBtn">Check Speed</button>
+  </div>
+
+  <!-- CHECKING -->
+  <div class="screen" id="screen-checking">
+    <h2>Checking..</h2>
+    <p class="phase-label" id="phaseLabel">(Download Speed)</p>
+
+    <div class="live-speed" id="liveSpeed"></div>
+
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="screen" id="screen-results">
+    <h2>Result</h2>
+
+    <div class="cards">
+      <div class="card glass">
+        <div class="card-label">Download</div>
+        <div class="card-main" id="dlMain">--</div>
+        <div class="card-sub" id="dlSub"></div>
+        <div class="rating" id="dlRating"></div>
+      </div>
+
+      <div class="card glass">
+        <div class="card-label">Upload</div>
+        <div class="card-main" id="ulMain">--</div>
+        <div class="card-sub" id="ulSub"></div>
+        <div class="rating" id="ulRating"></div>
+      </div>
+
+      <div class="card glass">
+        <div class="card-label">Ping</div>
+        <div class="card-main" id="pingMain">--</div>
+        <div class="card-sub" id="pingSub"></div>
+        <div class="rating" id="pingRating"></div>
+      </div>
+    </div>
+
+    <button class="retest-btn" id="retestBtn">Re-test</button>
+
+    <div class="history-wrap">
+      <div class="history-title">Previous results</div>
+      <div class="history-list" id="historyList"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
